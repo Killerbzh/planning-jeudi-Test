@@ -31,37 +31,44 @@
             display: flex; min-height: 100vh; flex-direction: row;
         }
 
-        /* ÉCRAN DE CONNEXION / INSCRIPTION */
-        .auth-overlay {
-            position: fixed; top:0; left:0; width:100vw; height:100vh;
-            background: #0f172a; z-index: 9999; display: flex;
-            align-items: center; justify-content: center; padding: 20px;
+        /* Écran de Bienvenue / Profil */
+        .welcome-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #0f172a; color: white; z-index: 2000;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
         }
-        .auth-card {
-            background: white; padding: 40px; border-radius: 24px;
-            width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .welcome-card {
+            background: #1e293b; padding: 40px; border-radius: 24px;
+            max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             text-align: center;
         }
-        .auth-card h2 { margin-top: 0; font-size: 1.8rem; font-weight: 800; color: #0f172a; }
-        .auth-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
-        .auth-form { display: flex; flex-direction: column; gap: 16px; }
-        .auth-input {
-            width: 100%; padding: 14px 16px; border: 1px solid #e2e8f0;
-            border-radius: 12px; font-size: 0.95rem; font-weight: 600;
-            outline: none; background: #f8fafc; transition: border 0.2s;
-        }
-        .auth-input:focus { border-color: #0284c7; background: white; }
-        .auth-btn {
-            background: #0284c7; color: white; border: none; padding: 14px;
-            border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
-            transition: background 0.2s; margin-top: 10px;
-        }
-        .auth-btn:hover { background: #0369a1; }
-        .auth-toggle { color: #0284c7; font-weight: 700; cursor: pointer; font-size: 0.9rem; margin-top: 15px; display: inline-block; }
-
-        /* APPLICATION PRINCIPALE */
-        .app-container { display: flex; width: 100%; min-height: 100vh; }
+        .welcome-card h2 { margin-top: 0; font-size: 1.8rem; font-weight: 800; }
+        .welcome-card p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 25px; }
         
+        .form-control { display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 20px; }
+        .form-control label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
+        .form-control select, .form-control input {
+            background: #0f172a; border: 1px solid #334155; color: white; padding: 14px;
+            border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none;
+        }
+        .form-control select:focus, .form-control input:focus { border-color: var(--sidebar-active); }
+        
+        .emoji-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; justify-content: center; }
+        .emoji-btn {
+            font-size: 1.4rem; background: #0f172a; border: 2px solid transparent;
+            padding: 8px; border-radius: 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .emoji-btn.selected { border-color: var(--sidebar-active); background: rgba(56, 189, 248, 0.1); }
+        
+        .primary-btn {
+            background: #0284c7; color: white; border: none; padding: 14px; width: 100%;
+            border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.2s;
+        }
+        .primary-btn:hover { background: #0369a1; }
+        .divider { margin: 25px 0; border-top: 1px solid #334155; position: relative; }
+        .divider span { position: absolute; top: -10px; background: #1e293b; padding: 0 10px; color: #64748b; font-size: 0.8rem; font-weight: 700; left: 50%; transform: translateX(-50%); }
+
+        /* Sidebar & Layout Principal */
         .sidebar {
             width: 280px; background-color: var(--sidebar-bg); padding: 40px 24px;
             display: flex; flex-direction: column; gap: 8px;
@@ -71,15 +78,16 @@
         .logo-area {
             display: flex; align-items: center; gap: 12px;
             font-weight: 800; font-size: 1.3rem; color: white;
-            margin-bottom: 30px; letter-spacing: -0.5px;
+            margin-bottom: 20px; letter-spacing: -0.5px;
         }
-
-        .user-welcome-sidebar {
-            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px;
-            color: white; font-size: 0.85rem; margin-bottom: 20px; display: flex;
-            flex-direction: column; gap: 4px;
+        
+        .current-user-box {
+            background: rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 12px;
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;
         }
-        .user-welcome-sidebar span { font-weight: 800; color: var(--sidebar-active); font-size: 1rem; }
+        .current-user-info { display: flex; align-items: center; gap: 10px; color: white; font-weight: 700; font-size: 0.95rem; }
+        .logout-btn { background: transparent; border: none; color: #f43f5e; cursor: pointer; font-size: 0.8rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+        .logout-btn:hover { background: rgba(244, 63, 94, 0.1); }
 
         .nav-btn {
             display: flex; align-items: center; gap: 14px; padding: 14px 18px;
@@ -91,8 +99,6 @@
 
         .nav-btn.active { background-color: rgba(56, 189, 248, 0.1); color: var(--sidebar-active); }
         .nav-btn:hover:not(.active) { background-color: rgba(255, 255, 255, 0.05); color: white; }
-        .logout-btn { margin-top: auto; color: #f87171; }
-        .logout-btn:hover { background-color: rgba(248, 113, 113, 0.1) !important; color: #f87171 !important; }
 
         .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; max-width: 1400px; margin: 0 auto; width: 100%; }
         .header-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; gap: 15px; flex-wrap: wrap; }
@@ -112,7 +118,6 @@
         }
         .selector-wrapper label { font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
         .selector-wrapper select { border: none; background: transparent; font-size: 1rem; font-weight: 800; color: #0284c7; cursor: pointer; outline: none; }
-        .selector-wrapper select.user-select { color: #059669; pointer-events: none; opacity: 0.8; } /* Bloqué sur l'utilisateur connecté */
 
         .page-section { display: none; }
         .page-section.active { display: block; }
@@ -123,7 +128,8 @@
 
         .inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
         .input-group { display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; }
-        .input-group span.name-display { font-size: 0.95rem; color: var(--text-main); font-weight: 600; width: 100%; }
+        .input-group input { border: none; background: transparent; width: 100%; font-size: 0.95rem; color: var(--text-main); font-weight: 600; }
+        .input-group input:focus { outline: none; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
         .semaine-card { border-radius: 24px; color: white; padding: 24px; display: flex; flex-direction: column; gap: 14px; position: relative; }
@@ -163,9 +169,9 @@
 
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 70px; flex-direction: row; padding: 0 10px; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); gap: 0; }
-            .logo-area, .user-welcome-sidebar { display: none; }
-            .nav-btn { flex-direction: column; gap: 4px; padding: 8px; font-size: 0.75rem; text-align: center; flex: 1; justify-content: center; margin-top:0 !important; }
+            .sidebar { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 75px; flex-direction: row; padding: 0 10px; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); gap: 0; }
+            .logo-area, .current-user-box { display: none; }
+            .nav-btn { flex-direction: column; gap: 4px; padding: 8px; font-size: 0.75rem; text-align: center; flex: 1; justify-content: center; }
             .main-content { padding: 20px 16px 90px 16px; }
             h1 { font-size: 1.5rem; }
             .header-status { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -181,80 +187,94 @@
 </head>
 <body>
 
-    <!-- ZONE D'AUTHENTIFICATION -->
-    <div id="authOverlay" class="auth-overlay">
-        <div class="auth-card">
-            <h2 id="authTitle">✨ Bienvenue !</h2>
-            <p id="authSubtitle">Connecte-toi pour voir et modifier le planning de cuisine.</p>
+    <!-- ÉCRAN D'ACCUEIL / PROFIL -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-card">
+            <h2>✨ Bienvenue sur Jeudi Cuistot</h2>
+            <p>Identifie-toi ou crée ton profil personnalisé pour gérer le planning de cuisine.</p>
             
-            <div class="auth-form">
-                <input type="text" id="authFirstName" class="auth-input" placeholder="Ton Prénom (Ex: Lucas)" style="display:none;">
-                <input type="email" id="authEmail" class="auth-input" placeholder="Adresse Email">
-                <input type="password" id="authPassword" class="auth-input" placeholder="Mot de passe">
-                <button id="authSubmitBtn" class="auth-btn">Se connecter</button>
+            <div class="form-control">
+                <label for="existingProfileSelect">👤 Choisir un profil existant :</label>
+                <select id="existingProfileSelect"></select>
             </div>
-            <span id="authToggleMode" class="auth-toggle">Pas encore de compte ? S'inscrire</span>
+            <button class="primary-btn" id="loginBtn" style="margin-bottom: 5px;">Se connecter</button>
+
+            <div class="divider"><span>OU</span></div>
+
+            <h3 style="margin-top:0; font-size:1.1rem; font-weight:700; text-align:left; color:#38bdf8;">🆕 Créer un nouveau profil :</h3>
+            
+            <div class="form-control">
+                <label for="newProfileName">👋 Ton prénom :</label>
+                <input type="text" id="newProfileName" placeholder="Ex: Lucas...">
+            </div>
+
+            <div class="form-control">
+                <label>🎨 Choisis ton Avatar / Emoji :</label>
+                <div class="emoji-picker" id="emojiPickerContainer"></div>
+            </div>
+
+            <button class="primary-btn" id="createProfileBtn" style="background:#059669;">Créer mon profil & Entrer</button>
         </div>
     </div>
 
-    <!-- APPLICATION -->
-    <div class="app-container">
-        <div class="sidebar">
-            <div class="logo-area">✨ <span>Jeudi Cuistot</span></div>
-            <div class="user-welcome-sidebar">Bienvenue, <span id="sidebarUserName">...</span></div>
-            
-            <button class="nav-btn active" id="btn-aperçu" onclick="switchPage('aperçu')">📅 <span>Planning</span></button>
-            <button class="nav-btn" id="btn-stats" onclick="switchPage('stats')">🏆 <span>Classement</span></button>
-            <button class="nav-btn logout-btn" id="logoutBtn">🚪 <span>Déconnexion</span></button>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo-area">✨ <span>Jeudi Cuistot</span></div>
+        
+        <div class="current-user-box">
+            <div class="current-user-info">
+                <span id="sidebarUserEmoji">🦊</span>
+                <span id="sidebarUserName">Lucas</span>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Changer</button>
         </div>
 
-        <div class="main-content">
-            <div class="header-status">
-                <h1>Culinary Workspace</h1>
-                
-                <div class="selectors-group">
-                    <div class="selector-wrapper">
-                        <label for="userSelect">👤 Connecté :</label>
-                        <select id="userSelect" class="month-select user-select"></select>
-                    </div>
+        <button class="nav-btn active" id="btn-aperçu" onclick="switchPage('aperçu')">📅 <span>Planning</span></button>
+        <button class="nav-btn" id="btn-stats" onclick="switchPage('stats')">🏆 <span>Classement</span></button>
+    </div>
 
-                    <div class="selector-wrapper">
-                        <label for="monthSelect">📅 Mois :</label>
-                        <select id="monthSelect" class="month-select">
-                            <option value="2026-06">Juin</option>
-                            <option value="2026-07">Juillet</option>
-                            <option value="2026-08">Août</option>
-                            <option value="2026-09">Septembre</option>
-                            <option value="2026-10">Octobre</option>
-                            <option value="2026-11">Novembre</option>
-                            <option value="2026-12">Décembre</option>
-                        </select>
-                    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="header-status">
+            <h1>Culinary Workspace</h1>
+            
+            <div class="selectors-group">
+                <div class="selector-wrapper">
+                    <label for="monthSelect">📅 Mois :</label>
+                    <select id="monthSelect" class="month-select">
+                        <option value="2026-06">Juin</option>
+                        <option value="2026-07">Juillet</option>
+                        <option value="2026-08">Août</option>
+                        <option value="2026-09">Septembre</option>
+                        <option value="2026-10">Octobre</option>
+                        <option value="2026-11">Novembre</option>
+                        <option value="2026-12">Décembre</option>
+                    </select>
                 </div>
             </div>
+        </div>
 
-            <div id="page-aperçu" class="page-section active">
-                <div class="section-panel">
-                    <div class="panel-header-flex">
-                        <div class="panel-title">👥 La Brigade des Cuistots</div>
-                    </div>
-                    <div class="inputs-grid" id="inputsContainer"></div>
+        <div id="page-aperçu" class="page-section active">
+            <div class="section-panel">
+                <div class="panel-header-flex">
+                    <div class="panel-title">👥 Équipe de cuisine (Modifs des prénoms globales)</div>
                 </div>
-                <h2 id="planningTitle" style="font-weight:800; font-size:1.3rem; margin-bottom:20px; color:#1e293b;">📅 Les Jeudis de Juin</h2>
-                <div class="cards-grid" id="cardsContainer"></div>
+                <div class="inputs-grid" id="inputsContainer"></div>
             </div>
+            <h2 id="planningTitle" style="font-weight:800; font-size:1.3rem; margin-bottom:20px; color:#1e293b;">📅 Les Jeudis de Juin</h2>
+            <div class="cards-grid" id="cardsContainer"></div>
+        </div>
 
-            <div id="page-stats" class="page-section">
-                <div class="stats-container">
-                    <h2 id="statsTitle" style="margin-top:0; font-weight:800; font-size:1.4rem; margin-bottom:6px;">🏆 Classement de Juin</h2>
-                    <p style="color:var(--text-muted); margin-bottom:25px; margin-top:0; font-size:0.9rem;">Calculé selon la satisfaction moyenne globale donnée par l'équipe.</p>
-                    <table class="stats-table">
-                        <thead>
-                            <tr><th style="width: 80px;">Rang</th><th>Nom</th><th>Score Moyen</th><th>Prestations</th></tr>
-                        </thead>
-                        <tbody id="statsTableBody"></tbody>
-                    </table>
-                </div>
+        <div id="page-stats" class="page-section">
+            <div class="stats-container">
+                <h2 id="statsTitle" style="margin-top:0; font-weight:800; font-size:1.4rem; margin-bottom:6px;">🏆 Classement de Juin</h2>
+                <p style="color:var(--text-muted); margin-bottom:25px; margin-top:0; font-size:0.9rem;">Calculé selon la satisfaction moyenne globale donnée par l'équipe.</p>
+                <table class="stats-table">
+                    <thead>
+                        <tr><th style="width: 80px;">Rang</th><th>Nom</th><th>Score Moyen</th><th>Prestations</th></tr>
+                    </thead>
+                    <tbody id="statsTableBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -262,117 +282,52 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // 🔑 Clés de configuration pour "base-de-test-4c1a5"
     const firebaseConfig = {
-        apiKey: "AIzaSyCjxDs1KpC31RxhqttQ4RTK29ODM8glQHE",
-        authDomain: "base-de-test-4c1a5.firebaseapp.com",
-        projectId: "base-de-test-4c1a5",
-        storageBucket: "base-de-test-4c1a5.firebasestorage.app",
-        messagingSenderId: "275650264990",
-        appId: "1:275650264990:web:6cdc061a42b6d94de5208f"
+        apiKey: "AIzaSyCsJACTFFdHAF1v0QNw9h5spegq7lV2-zE",
+        authDomain: "planning-jeudi.firebaseapp.com",
+        projectId: "planning-jeudi",
+        storageBucket: "planning-jeudi.firebasestorage.app",
+        messagingSenderId: "894632315552",
+        appId: "1:894632315552:web:aed8853528dec823d617c5"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth(app);
 
-    const emojis = ["🦊", "🦁", "🐼", "🐨", "🐯", "🐱", "🐰", "🦊", "🦄", "🦅"];
+    const availableEmojis = ["🦊", "🦁", "🐼", "🐨", "🐯", "🐱", "🐰", "🦄", "🦅", "🦝", "🐸", "🐵", "🌶️", "🥑", "🧑‍🍳"];
+    let selectedEmoji = availableEmojis[0];
+
     let defaultParticipants = ["Lucas", "Laura", "Claribel", "Yoann", "Mireille", "Jeanne", "Candices", "Killian", "Annaig", "Ewen", "Anthony", "Clement"];
-    
     let participants = [...defaultParticipants];
+    let customEmojisMapping = {}; // Lie les prénoms à leur emoji personnalisé
+    
     let thursdaysData = [];
     let overrides = {}; 
 
     let currentMonth = "2026-06";
     let currentUser = "";
     let unsubscribe = null;
-    let isLoginMode = true;
 
     const monthNames = {
         "2026-06": "Juin", "2026-07": "Juillet", "2026-08": "Août",
         "2026-09": "Septembre", "2026-10": "Octobre", "2026-11": "Novembre", "2026-12": "Décembre"
     };
-    
 
-    // --- GESTION DE L'AUTHENTIFICATION ---
-
-    const authOverlay = document.getElementById('authOverlay');
-    const authTitle = document.getElementById('authTitle');
-    const authSubtitle = document.getElementById('authSubtitle');
-    const authFirstName = document.getElementById('authFirstName');
-    const authEmail = document.getElementById('authEmail');
-    const authPassword = document.getElementById('authPassword');
-    const authSubmitBtn = document.getElementById('authSubmitBtn');
-    const authToggleMode = document.getElementById('authToggleMode');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const sidebarUserName = document.getElementById('sidebarUserName');
-
-    authToggleMode.addEventListener('click', () => {
-        isLoginMode = !isLoginMode;
-        if (isLoginMode) {
-            authTitle.innerText = "✨ Bienvenue !";
-            authSubtitle.innerText = "Connecte-toi pour voir et modifier le planning de cuisine.";
-            authFirstName.style.display = "none";
-            authSubmitBtn.innerText = "Se connecter";
-            authToggleMode.innerText = "Pas encore de compte ? S'inscrire";
-        } else {
-            authTitle.innerText = "🍳 Rejoins la brigade !";
-            authSubtitle.innerText = "Crée ton compte pour participer aux jeudis cuistot.";
-            authFirstName.style.display = "block";
-            authSubmitBtn.innerText = "Créer mon compte";
-            authToggleMode.innerText = "Déjà inscrit ? Se connecter";
-        }
+    // INIT EMOJI PICKER DANS L'ACCUEIL
+    const pickerContainer = document.getElementById('emojiPickerContainer');
+    availableEmojis.forEach((emoji, i) => {
+        const btn = document.createElement('button');
+        btn.className = `emoji-btn ${i === 0 ? 'selected' : ''}`;
+        btn.innerText = emoji;
+        btn.type = "button";
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedEmoji = emoji;
+        });
+        pickerContainer.appendChild(btn);
     });
-
-    authSubmitBtn.addEventListener('click', async () => {
-        const email = authEmail.value.trim();
-        const password = authPassword.value;
-        const firstName = authFirstName.value.trim();
-
-        if(!email || !password) { alert("Remplis tous les champs !"); return; }
-
-        try {
-            if (isLoginMode) {
-                await signInWithEmailAndPassword(auth, email, password);
-            } else {
-                if(!firstName) { alert("Donne-nous ton prénom !"); return; }
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                // Sauvegarder le prénom dans le profil de l'utilisateur Firebase
-                await updateProfile(userCredential.user, { displayName: firstName });
-                
-                // Ajouter automatiquement le prénom à la liste globale des participants dans Firebase si absent
-                if(!participants.includes(firstName)) {
-                    participants.push(firstName);
-                    await updateDoc(doc(db, "planning", `mois_${currentMonth}`), { names: participants });
-                }
-                // Forcer le rechargement de la page pour bien propager le changement d'état
-                window.location.reload();
-            }
-        } catch (error) {
-            alert("Erreur : " || error.message);
-        }
-    });
-
-    logoutBtn.addEventListener('click', () => {
-        signOut(auth);
-    });
-
-    // ÉCOUTEUR D'ÉTAT DE CONNEXION D'UN COMPTE
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            authOverlay.style.display = 'none';
-            currentUser = user.displayName || "Invité";
-            sidebarUserName.innerText = currentUser;
-            connectToMonth(currentMonth);
-        } else {
-            authOverlay.style.display = 'flex';
-            if (unsubscribe) unsubscribe();
-        }
-    });
-
-    // --- LOGIQUE DU PLANNING ---
 
     function getThursdaysInMonthWithGlobalIndex(year, monthIndex) {
         let date = new Date(year, 0, 1);
@@ -414,6 +369,7 @@
         });
 
         const baseIndex = globalIndex - 22; 
+        
         const platIdx = ((baseIndex * 2) % order.length + order.length) % order.length;
         const dessertIdx = (((baseIndex * 2) + 1) % order.length + order.length) % order.length;
         const rempIdx = (((baseIndex * 2) + 2) % order.length + order.length) % order.length;
@@ -440,6 +396,80 @@
         connectToMonth(currentMonth);
     });
 
+    // LOGIQUE DE GESTION DE COMPTE UTILISATEUR
+    function checkUserSession() {
+        const savedUser = localStorage.getItem('jeudiCuistot_user');
+        if (savedUser && participants.includes(savedUser)) {
+            currentUser = savedUser;
+            document.getElementById('welcomeScreen').style.display = 'none';
+            updateSidebarUserInfo();
+            generatePlanningCards();
+        } else {
+            document.getElementById('welcomeScreen').style.display = 'flex';
+        }
+    }
+
+    function updateSidebarUserInfo() {
+        document.getElementById('sidebarUserName').innerText = currentUser;
+        document.getElementById('sidebarUserEmoji').innerText = customEmojisMapping[currentUser] || "🦊";
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const selected = document.getElementById('existingProfileSelect').value;
+        if(selected) {
+            currentUser = selected;
+            localStorage.setItem('jeudiCuistot_user', currentUser);
+            document.getElementById('welcomeScreen').style.display = 'none';
+            updateSidebarUserInfo();
+            generatePlanningCards();
+        }
+    });
+
+    document.getElementById('createProfileBtn').addEventListener('click', () => {
+        const inputName = document.getElementById('newProfileName').value.trim();
+        if (inputName === "") {
+            alert("S'il te plaît, entre un prénom valide.");
+            return;
+        }
+        if (participants.includes(inputName)) {
+            alert("Ce profil existe déjà ! Sélectionne-le dans la liste juste au-dessus.");
+            return;
+        }
+
+        participants.push(inputName);
+        customEmojisMapping[inputName] = selectedEmoji;
+
+        updateDoc(doc(db, "planning", `mois_${currentMonth}`), { 
+            names: participants,
+            customEmojisMapping: customEmojisMapping
+        }).then(() => {
+            currentUser = inputName;
+            localStorage.setItem('jeudiCuistot_user', currentUser);
+            document.getElementById('newProfileName').value = "";
+            document.getElementById('welcomeScreen').style.display = 'none';
+            updateSidebarUserInfo();
+            generatePlanningCards();
+        });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('jeudiCuistot_user');
+        currentUser = "";
+        fillExistingProfilesDropdown();
+        document.getElementById('welcomeScreen').style.display = 'flex';
+    });
+
+    function fillExistingProfilesDropdown() {
+        const select = document.getElementById('existingProfileSelect');
+        select.innerHTML = "";
+        participants.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p;
+            opt.innerText = `${customEmojisMapping[p] || "🦊"} ${p}`;
+            select.appendChild(opt);
+        });
+    }
+
     function connectToMonth(monthId) {
         if (unsubscribe) unsubscribe();
 
@@ -449,21 +479,16 @@
                 participants = data.names || [...defaultParticipants];
                 thursdaysData = data.thursdaysData || [];
                 overrides = data.overrides || {};
+                customEmojisMapping = data.customEmojisMapping || {};
             } else {
                 participants = [...defaultParticipants];
                 thursdaysData = [];
                 overrides = {};
-                setDoc(doc(db, "planning", `mois_${monthId}`), { names: participants, thursdaysData: [], overrides: {} });
+                customEmojisMapping = {};
+                setDoc(doc(db, "planning", `mois_${monthId}`), { names: participants, thursdaysData: [], overrides: {}, customEmojisMapping: {} });
             }
-            
-            // Si le user connecté n'est pas dans la liste récupérée, on l'ajoute automatiquement
-            if(currentUser && !participants.includes(currentUser)) {
-                participants.push(currentUser);
-                updateDoc(doc(db, "planning", `mois_${monthId}`), { names: participants });
-                return;
-            }
-
-            updateUserDropdown();
+            fillExistingProfilesDropdown();
+            checkUserSession();
             initInputs();
             generatePlanningCards();
             if (document.getElementById('page-stats').classList.contains('active')) {
@@ -472,29 +497,61 @@
         });
     }
 
-    function updateUserDropdown() {
-        const userSelect = document.getElementById('userSelect');
-        userSelect.innerHTML = '';
-        participants.forEach(name => {
-            const opt = document.createElement('option');
-            opt.value = name;
-            opt.innerText = name;
-            if(name === currentUser) opt.selected = true;
-            userSelect.appendChild(opt);
-        });
-    }
-
     function initInputs() {
         const container = document.getElementById('inputsContainer');
         container.innerHTML = '';
         participants.forEach((name, index) => {
+            const currentEmoji = customEmojisMapping[name] || availableEmojis[index % availableEmojis.length];
             const div = document.createElement('div');
             div.className = 'input-group';
             div.innerHTML = `
-                <span style="margin-right:8px;">${emojis[index % emojis.length]}</span>
-                <span class="name-display">${name}</span>
+                <span style="margin-right:8px;">${currentEmoji}</span>
+                <input type="text" value="${name}" data-index="${index}" id="input-chef-${index}">
             `;
             container.appendChild(div);
+            
+            document.getElementById(`input-chef-${index}`).addEventListener('blur', (e) => {
+                const idx = e.target.dataset.index;
+                const oldName = participants[idx];
+                const newName = e.target.value.trim() || `Collaborateur ${parseInt(idx) + 1}`;
+                
+                if(oldName === newName) return;
+
+                participants[idx] = newName;
+                
+                // Transférer l'emoji assigné vers le nouveau nom
+                if(customEmojisMapping[oldName]) {
+                    customEmojisMapping[newName] = customEmojisMapping[oldName];
+                    delete customEmojisMapping[oldName];
+                }
+
+                if(currentUser === oldName) {
+                    currentUser = newName;
+                    localStorage.setItem('jeudiCuistot_user', currentUser);
+                    updateSidebarUserInfo();
+                }
+
+                thursdaysData.forEach(t => {
+                    if (t.ratings && t.ratings[oldName]) { t.ratings[newName] = t.ratings[oldName]; delete t.ratings[oldName]; }
+                    if (t.presence) {
+                        const pIdx = t.presence.indexOf(oldName);
+                        if (pIdx > -1) t.presence[pIdx] = newName;
+                    }
+                });
+
+                Object.keys(overrides).forEach(k => {
+                    if(overrides[k].plat === oldName) overrides[k].plat = newName;
+                    if(overrides[k].dessert === oldName) overrides[k].dessert = newName;
+                    if(overrides[k].remp === oldName) overrides[k].remp = newName;
+                });
+
+                updateDoc(doc(db, "planning", `mois_${currentMonth}`), { 
+                    names: participants, 
+                    thursdaysData: thursdaysData, 
+                    overrides: overrides,
+                    customEmojisMapping: customEmojisMapping
+                });
+            });
         });
     }
 
@@ -504,10 +561,11 @@
             overrides[globalIndex] = { ...defaultRoles };
         }
         overrides[globalIndex][roleType] = selectedValue;
-        updateDoc(doc(db, "planning", `mois_${currentMonth}`), { overrides: overrides });
+        updateDoc(doc(doc(db, "planning", `mois_${currentMonth}`)), { overrides: overrides });
     }
 
     window.rateWeekCloud = function(weekIndex, starRating) {
+        if(!currentUser) return;
         if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, presence: [] };
         if(!thursdaysData[weekIndex].ratings) thursdaysData[weekIndex].ratings = {};
         thursdaysData[weekIndex].ratings[currentUser] = starRating;
@@ -515,6 +573,7 @@
     }
 
     window.togglePresence = function(weekIndex) {
+        if(!currentUser) return;
         if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, presence: [] };
         if(!thursdaysData[weekIndex].presence) thursdaysData[weekIndex].presence = [];
         const presenceList = thursdaysData[weekIndex].presence;
@@ -529,12 +588,13 @@
     }
 
     function buildOptionsHTML(selectedName) {
-        return participants.map(p => `<option value="${p}" ${p === selectedName ? 'selected' : ''}>${p}</option>`).join('');
+        return participants.map(p => `<option value="${p}" ${p === selectedName ? 'selected' : ''}>${customEmojisMapping[p] || "🦊"} ${p}</option>`).join('');
     }
 
     function generatePlanningCards() {
         const cardsContainer = document.getElementById('cardsContainer');
         cardsContainer.innerHTML = '';
+        if(!currentUser) return;
 
         const parts = currentMonth.split('-');
         const year = parseInt(parts[0]);
@@ -568,7 +628,11 @@
 
             const currentPresence = thursdaysData[i].presence;
             const isPresent = currentPresence.includes(currentUser);
-            const presenceListText = currentPresence.length > 0 ? currentPresence.join(', ') : "Personne pour le moment";
+            
+            // Affichage de la liste de présence enrichie avec les émojis correspondants
+            const presenceListText = currentPresence.length > 0 
+                ? currentPresence.map(p => `${customEmojisMapping[p] || "🦊"} ${p}`).join(', ') 
+                : "Personne pour le moment";
 
             card.innerHTML = `
                 <div class="card-header">
@@ -657,13 +721,15 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><span class="badge-rank ${rankClass}">${rankText}</span></td>
-                <td style="font-weight:700;">${p.name}</td>
+                <td style="font-weight:700;">${customEmojisMapping[p.name] || "🦊"} ${p.name}</td>
                 <td style="color:${p.moyenne !== 'N/A' ? '#eab308' : '#94a3b8'}; font-weight:800;">${p.moyenne !== 'N/A' ? p.moyenne + ' ★' : 'Aucun repas noté'}</td>
                 <td>${p.repasComptes} fois chef ce mois</td>
             `;
             tbody.appendChild(tr);
         });
     }
+
+    connectToMonth(currentMonth);
 </script>
 </body>
 </html>
