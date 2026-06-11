@@ -50,6 +50,7 @@
         .form-control select, .form-control input {
             background: #0f172a; border: 1px solid #334155; color: white; padding: 14px;
             border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none;
+            width: 100%;
         }
         .form-control select:focus, .form-control input:focus { border-color: var(--sidebar-active); }
         
@@ -127,9 +128,11 @@
         .panel-title { margin: 0; font-size: 1.15rem; font-weight: 700; }
 
         .inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-        .input-group { display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; }
+        .input-group { display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; justify-content: space-between; }
+        .input-group-left { display: flex; align-items: center; gap: 8px; flex: 1; }
         .input-group input { border: none; background: transparent; width: 100%; font-size: 0.95rem; color: var(--text-main); font-weight: 600; }
         .input-group input:focus { outline: none; }
+        .edit-emoji-select { border: none; background: transparent; font-size: 1.1rem; cursor: pointer; outline: none; padding: 0; margin-right: 4px; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
         .semaine-card { border-radius: 24px; color: white; padding: 24px; display: flex; flex-direction: column; gap: 14px; position: relative; }
@@ -151,11 +154,12 @@
         .presence-btn.active { background: #22c55e; color: white; }
         .presence-list { opacity: 0.85; font-size: 0.78rem; word-break: break-word; }
 
-        .rating-box { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; }
+        .rating-box { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.05); padding: 10px 12px; border-radius: 12px; gap: 8px; }
+        .rating-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .stars { display: flex; gap: 4px; font-size: 1.2rem; cursor: pointer; }
         .star { color: rgba(255, 255, 255, 0.25); }
         .star.active { color: #facc15; }
-        .avg-rating { font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 6px; }
+        .avg-rating { font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; text-align: right; }
 
         .stats-container { background: white; border-radius: 24px; padding: 30px; box-shadow: var(--card-shadow); overflow-x: auto; }
         .stats-table { width: 100%; border-collapse: collapse; }
@@ -257,7 +261,7 @@
         <div id="page-aperçu" class="page-section active">
             <div class="section-panel">
                 <div class="panel-header-flex">
-                    <div class="panel-title">👥 Équipe de cuisine (Modifs des prénoms globales)</div>
+                    <div class="panel-title">👥 Équipe (Modifie les prénoms et change les avatars directement)</div>
                 </div>
                 <div class="inputs-grid" id="inputsContainer"></div>
             </div>
@@ -268,7 +272,7 @@
         <div id="page-stats" class="page-section">
             <div class="stats-container">
                 <h2 id="statsTitle" style="margin-top:0; font-weight:800; font-size:1.4rem; margin-bottom:6px;">🏆 Classement de Juin</h2>
-                <p style="color:var(--text-muted); margin-bottom:25px; margin-top:0; font-size:0.9rem;">Calculé selon la satisfaction moyenne globale donnée par l'équipe.</p>
+                <p style="color:var(--text-muted); margin-bottom:25px; margin-top:0; font-size:0.9rem;">Calculé selon la satisfaction moyenne combinée (Plat + Dessert) donnée par l'équipe.</p>
                 <table class="stats-table">
                     <thead>
                         <tr><th style="width: 80px;">Rang</th><th>Nom</th><th>Score Moyen</th><th>Prestations</th></tr>
@@ -283,24 +287,26 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // Nouvelle clé Firebase mise à jour
     const firebaseConfig = {
-        apiKey: "AIzaSyCsJACTFFdHAF1v0QNw9h5spegq7lV2-zE",
-        authDomain: "planning-jeudi.firebaseapp.com",
-        projectId: "planning-jeudi",
-        storageBucket: "planning-jeudi.firebasestorage.app",
-        messagingSenderId: "894632315552",
-        appId: "1:894632315552:web:aed8853528dec823d617c5"
+        apiKey: "AIzaSyCjxDs1KpC31RxhqttQ4RTK29ODM8glQHE",
+        authDomain: "base-de-test-4c1a5.firebaseapp.com",
+        projectId: "base-de-test-4c1a5",
+        storageBucket: "base-de-test-4c1a5.firebasestorage.app",
+        messagingSenderId: "275650264990",
+        appId: "1:275650264990:web:6cdc061a42b6d94de5208f",
+        measurementId: "G-PS2F7EKGPV"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const availableEmojis = ["🦊", "🦁", "🐼", "🐨", "🐯", "🐱", "🐰", "🦄", "🦅", "🦝", "🐸", "🐵", "🌶️", "🥑", "🧑‍🍳"];
+    const availableEmojis = ["🦊", "🦁", "🐼", "🐨", "🐯", "🐱", "🐰", "🦄", "🦅", "🦝", "🐸", "🐵", "🌶️", "🥑", "🧑‍🍳", "🍕", "🧁", "🍉", "🧋"];
     let selectedEmoji = availableEmojis[0];
 
     let defaultParticipants = ["Lucas", "Laura", "Claribel", "Yoann", "Mireille", "Jeanne", "Candices", "Killian", "Annaig", "Ewen", "Anthony", "Clement"];
     let participants = [...defaultParticipants];
-    let customEmojisMapping = {}; // Lie les prénoms à leur emoji personnalisé
+    let customEmojisMapping = {}; 
     
     let thursdaysData = [];
     let overrides = {}; 
@@ -349,6 +355,7 @@
         return thursdaysInRequestedMonth;
     }
 
+    // ALGORITHME DE RÉPARTITION LOGIQUE ET ÉQUITABLE (Évite que la même personne enchaîne plat/dessert)
     function getRolesForGlobalIndex(globalIndex) {
         if (overrides && overrides[globalIndex]) {
             return {
@@ -368,11 +375,17 @@
             if (!order.includes(p)) order.push(p);
         });
 
-        const baseIndex = globalIndex - 22; 
-        
-        const platIdx = ((baseIndex * 2) % order.length + order.length) % order.length;
-        const dessertIdx = (((baseIndex * 2) + 1) % order.length + order.length) % order.length;
-        const rempIdx = (((baseIndex * 2) + 2) % order.length + order.length) % order.length;
+        const len = order.length;
+        if(len === 0) return { plat: "Invité(e)", dessert: "Invité(e)", remp: "Invité(e)" };
+
+        // Décalages structurels pour éviter les collisions et équilibrer les tâches
+        const platIdx = globalIndex % len;
+        const dessertIdx = (globalIndex + Math.floor(len / 2)) % len; 
+        let rempIdx = (globalIndex + 1) % len;
+
+        if (rempIdx === platIdx || rempIdx === dessertIdx) {
+            rempIdx = (rempIdx + 1) % len;
+        }
 
         return {
             plat: order[platIdx] || "Invité(e)",
@@ -396,7 +409,6 @@
         connectToMonth(currentMonth);
     });
 
-    // LOGIQUE DE GESTION DE COMPTE UTILISATEUR
     function checkUserSession() {
         const savedUser = localStorage.getItem('jeudiCuistot_user');
         if (savedUser && participants.includes(savedUser)) {
@@ -425,14 +437,18 @@
         }
     });
 
+    // CRÉATION AVEC VÉRIFICATION STRICTE DU NOM EXISTANT
     document.getElementById('createProfileBtn').addEventListener('click', () => {
         const inputName = document.getElementById('newProfileName').value.trim();
         if (inputName === "") {
             alert("S'il te plaît, entre un prénom valide.");
             return;
         }
-        if (participants.includes(inputName)) {
-            alert("Ce profil existe déjà ! Sélectionne-le dans la liste juste au-dessus.");
+        
+        // Comparaison insensible à la casse
+        const nameExists = participants.some(p => p.toLowerCase() === inputName.toLowerCase());
+        if (nameExists) {
+            alert(`Impossible : une personne nommée "${inputName}" existe déjà dans l'équipe !`);
             return;
         }
 
@@ -497,19 +513,43 @@
         });
     }
 
+    // MODIFICATION EN DIRECT DES PROFILS (Prénoms + Sélecteur d'Emoji d'édition)
     function initInputs() {
         const container = document.getElementById('inputsContainer');
         container.innerHTML = '';
         participants.forEach((name, index) => {
-            const currentEmoji = customEmojisMapping[name] || availableEmojis[index % availableEmojis.length];
+            const currentEmoji = customEmojisMapping[name] || "🦊";
+            
             const div = document.createElement('div');
             div.className = 'input-group';
+            
+            // Création d'un mini-sélecteur pour éditer son emoji directement
+            let emojiOptionsHTML = availableEmojis.map(emo => `<option value="${emo}" ${emo === currentEmoji ? 'selected' : ''}>${emo}</option>`).join('');
+            
             div.innerHTML = `
-                <span style="margin-right:8px;">${currentEmoji}</span>
-                <input type="text" value="${name}" data-index="${index}" id="input-chef-${index}">
+                <div class="input-group-left">
+                    <select class="edit-emoji-select" data-index="${index}" id="emoji-select-${index}">
+                        ${emojiOptionsHTML}
+                    </select>
+                    <input type="text" value="${name}" data-index="${index}" id="input-chef-${index}">
+                </div>
             `;
             container.appendChild(div);
             
+            // Écouteur de changement d'emoji en direct
+            document.getElementById(`emoji-select-${index}`).addEventListener('change', (e) => {
+                const idx = e.target.dataset.index;
+                const pName = participants[idx];
+                const newEmo = e.target.value;
+                
+                customEmojisMapping[pName] = newEmo;
+                if(currentUser === pName) {
+                    updateSidebarUserInfo();
+                }
+                updateDoc(doc(db, "planning", `mois_${currentMonth}`), { customEmojisMapping: customEmojisMapping });
+            });
+
+            // Écouteur de floutage pour modification du prénom global
             document.getElementById(`input-chef-${index}`).addEventListener('blur', (e) => {
                 const idx = e.target.dataset.index;
                 const oldName = participants[idx];
@@ -517,9 +557,15 @@
                 
                 if(oldName === newName) return;
 
+                // Vérification doublon lors du renommage global
+                if(participants.some((p, pIdx) => p.toLowerCase() === newName.toLowerCase() && pIdx != idx)) {
+                    alert(`Le nom "${newName}" est déjà attribué.`);
+                    e.target.value = oldName;
+                    return;
+                }
+
                 participants[idx] = newName;
                 
-                // Transférer l'emoji assigné vers le nouveau nom
                 if(customEmojisMapping[oldName]) {
                     customEmojisMapping[newName] = customEmojisMapping[oldName];
                     delete customEmojisMapping[oldName];
@@ -533,6 +579,7 @@
 
                 thursdaysData.forEach(t => {
                     if (t.ratings && t.ratings[oldName]) { t.ratings[newName] = t.ratings[oldName]; delete t.ratings[oldName]; }
+                    if (t.ratingsDessert && t.ratingsDessert[oldName]) { t.ratingsDessert[newName] = t.ratingsDessert[oldName]; delete t.ratingsDessert[oldName]; }
                     if (t.presence) {
                         const pIdx = t.presence.indexOf(oldName);
                         if (pIdx > -1) t.presence[pIdx] = newName;
@@ -561,20 +608,24 @@
             overrides[globalIndex] = { ...defaultRoles };
         }
         overrides[globalIndex][roleType] = selectedValue;
-        updateDoc(doc(doc(db, "planning", `mois_${currentMonth}`)), { overrides: overrides });
+        updateDoc(doc(db, "planning", `mois_${currentMonth}`), { overrides: overrides });
     }
 
-    window.rateWeekCloud = function(weekIndex, starRating) {
+    // CLOUD RATING DOUBLE ENTRÉE (Plat & Dessert)
+    window.rateWeekCloud = function(weekIndex, type, starRating) {
         if(!currentUser) return;
-        if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, presence: [] };
-        if(!thursdaysData[weekIndex].ratings) thursdaysData[weekIndex].ratings = {};
-        thursdaysData[weekIndex].ratings[currentUser] = starRating;
+        if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, ratingsDessert: {}, presence: [] };
+        
+        const fieldName = type === 'plat' ? 'ratings' : 'ratingsDessert';
+        if(!thursdaysData[weekIndex][fieldName]) thursdaysData[weekIndex][fieldName] = {};
+        
+        thursdaysData[weekIndex][fieldName][currentUser] = starRating;
         updateDoc(doc(db, "planning", `mois_${currentMonth}`), { thursdaysData: thursdaysData });
     }
 
     window.togglePresence = function(weekIndex) {
         if(!currentUser) return;
-        if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, presence: [] };
+        if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, ratingsDessert: {}, presence: [] };
         if(!thursdaysData[weekIndex].presence) thursdaysData[weekIndex].presence = [];
         const presenceList = thursdaysData[weekIndex].presence;
         const pIdx = presenceList.indexOf(currentUser);
@@ -607,29 +658,43 @@
             
             const roles = getRolesForGlobalIndex(jeudiInfo.globalIndex);
 
-            if(!thursdaysData[i]) thursdaysData[i] = { ratings: {}, presence: [] };
+            if(!thursdaysData[i]) thursdaysData[i] = { ratings: {}, ratingsDessert: {}, presence: [] };
             if(!thursdaysData[i].ratings) thursdaysData[i].ratings = {};
+            if(!thursdaysData[i].ratingsDessert) thursdaysData[i].ratingsDessert = {};
             if(!thursdaysData[i].presence) thursdaysData[i].presence = [];
 
-            const currentRatings = thursdaysData[i].ratings;
-            const voters = Object.keys(currentRatings);
-            let avgText = "Pas de note";
-            if (voters.length > 0) {
-                let total = voters.reduce((sum, voter) => sum + currentRatings[voter], 0);
-                avgText = `⭐ ${(total / voters.length).toFixed(1)} (${voters.length} v.)`;
+            // Calcul des moyennes séparées Plat et Dessert
+            const platRatings = thursdaysData[i].ratings;
+            const dessertRatings = thursdaysData[i].ratingsDessert;
+            
+            const votersPlat = Object.keys(platRatings);
+            const votersDessert = Object.keys(dessertRatings);
+            
+            let avgPlatText = "Plat: —";
+            if (votersPlat.length > 0) {
+                let total = votersPlat.reduce((sum, voter) => sum + platRatings[voter], 0);
+                avgPlatText = `🍲 ${(total / votersPlat.length).toFixed(1)} (${votersPlat.length} v.)`;
             }
 
-            const userRating = currentRatings[currentUser] || 0;
+            let avgDessertText = "Dessert: —";
+            if (votersDessert.length > 0) {
+                let total = votersDessert.reduce((sum, voter) => sum + dessertRatings[voter], 0);
+                avgDessertText = `🍰 ${(total / votersDessert.length).toFixed(1)} (${votersDessert.length} v.)`;
+            }
 
-            let starsHTML = '';
+            const userPlatRating = platRatings[currentUser] || 0;
+            const userDessertRating = dessertRatings[currentUser] || 0;
+
+            let starsPlatHTML = '';
+            let starsDessertHTML = '';
             for(let s = 1; s <= 5; s++) {
-                starsHTML += `<span class="star ${s <= userRating ? 'active' : ''}" onclick="rateWeekCloud(${i}, ${s})">★</span>`;
+                starsPlatHTML += `<span class="star ${s <= userPlatRating ? 'active' : ''}" onclick="rateWeekCloud(${i}, 'plat', ${s})">★</span>`;
+                starsDessertHTML += `<span class="star ${s <= userDessertRating ? 'active' : ''}" onclick="rateWeekCloud(${i}, 'dessert', ${s})">★</span>`;
             }
 
             const currentPresence = thursdaysData[i].presence;
             const isPresent = currentPresence.includes(currentUser);
             
-            // Affichage de la liste de présence enrichie avec les émojis correspondants
             const presenceListText = currentPresence.length > 0 
                 ? currentPresence.map(p => `${customEmojisMapping[p] || "🦊"} ${p}`).join(', ') 
                 : "Personne pour le moment";
@@ -637,7 +702,10 @@
             card.innerHTML = `
                 <div class="card-header">
                     <span>${jeudiInfo.dateText}</span>
-                    <span class="avg-rating">${avgText}</span>
+                    <div class="avg-rating">
+                        <span>${avgPlatText}</span>
+                        <span>${avgDessertText}</span>
+                    </div>
                 </div>
                 <div class="role-box">
                     <span class="role-label">🍲 Plat Principal</span>
@@ -669,8 +737,14 @@
                 </div>
 
                 <div class="rating-box">
-                    <span class="role-label">Ta note :</span>
-                    <div class="stars">${starsHTML}</div>
+                    <div class="rating-row">
+                        <span class="role-label">Note Plat :</span>
+                        <div class="stars">${starsPlatHTML}</div>
+                    </div>
+                    <div class="rating-row">
+                        <span class="role-label">Note Dessert :</span>
+                        <div class="stars">${starsDessertHTML}</div>
+                    </div>
                 </div>
             `;
             cardsContainer.appendChild(card);
@@ -688,21 +762,35 @@
         const thursdaysDates = getThursdaysInMonthWithGlobalIndex(year, monthIndex);
 
         thursdaysDates.forEach((jeudiInfo, i) => {
-            if(!thursdaysData[i] || !thursdaysData[i].ratings) return;
+            if(!thursdaysData[i]) return;
             
-            const currentRatings = thursdaysData[i].ratings;
-            const voters = Object.keys(currentRatings);
+            const platRatings = thursdaysData[i].ratings || {};
+            const dessertRatings = thursdaysData[i].ratingsDessert || {};
             
-            if (voters.length > 0) {
-                let totalJeudi = voters.reduce((sum, voter) => sum + currentRatings[voter], 0);
-                let moyenneJeudi = totalJeudi / voters.length;
+            const votersPlat = Object.keys(platRatings);
+            const votersDessert = Object.keys(dessertRatings);
+            
+            const roles = getRolesForGlobalIndex(jeudiInfo.globalIndex);
 
-                const roles = getRolesForGlobalIndex(jeudiInfo.globalIndex);
-                
-                let chefIdx = participants.indexOf(roles.plat);
-                if(chefIdx > -1 && playerStats[chefIdx]) {
-                    playerStats[chefIdx].totalMoyennes += moyenneJeudi;
-                    playerStats[chefIdx].repasComptes += 1;
+            // Prise en compte de la note du plat pour le chef du plat
+            if (votersPlat.length > 0) {
+                let totalPlat = votersPlat.reduce((sum, voter) => sum + platRatings[voter], 0);
+                let moyPlat = totalPlat / votersPlat.length;
+                let chefPlatIdx = participants.indexOf(roles.plat);
+                if(chefPlatIdx > -1 && playerStats[chefPlatIdx]) {
+                    playerStats[chefPlatIdx].totalMoyennes += moyPlat;
+                    playerStats[chefPlatIdx].repasComptes += 1;
+                }
+            }
+
+            // Prise en compte de la note du dessert pour le chef du dessert
+            if (votersDessert.length > 0) {
+                let totalDessert = votersDessert.reduce((sum, voter) => sum + dessertRatings[voter], 0);
+                let moyDessert = totalDessert / votersDessert.length;
+                let chefDessertIdx = participants.indexOf(roles.dessert);
+                if(chefDessertIdx > -1 && playerStats[chefDessertIdx]) {
+                    playerStats[chefDessertIdx].totalMoyennes += moyDessert;
+                    playerStats[chefDessertIdx].repasComptes += 1;
                 }
             }
         });
@@ -722,8 +810,8 @@
             tr.innerHTML = `
                 <td><span class="badge-rank ${rankClass}">${rankText}</span></td>
                 <td style="font-weight:700;">${customEmojisMapping[p.name] || "🦊"} ${p.name}</td>
-                <td style="color:${p.moyenne !== 'N/A' ? '#eab308' : '#94a3b8'}; font-weight:800;">${p.moyenne !== 'N/A' ? p.moyenne + ' ★' : 'Aucun repas noté'}</td>
-                <td>${p.repasComptes} fois chef ce mois</td>
+                <td style="color:${p.moyenne !== 'N/A' ? '#eab308' : '#94a3b8'}; font-weight:800;">${p.moyenne !== 'N/A' ? p.moyenne + ' ★' : 'Aucune note'}</td>
+                <td>${p.repasComptes} prestation(s) ce mois</td>
             `;
             tbody.appendChild(tr);
         });
