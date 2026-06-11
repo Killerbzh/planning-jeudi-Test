@@ -1,16 +1,3 @@
-C'est une excellente remarque ! C'est vrai que c'était contraignant de devoir recréer son compte ou renommer l'équipe à chaque fois qu'on changeait de mois.
-
-Le problème venait du fait que le script sauvegardait l'équipe *à l'intérieur* de l'espace de stockage de chaque mois (`mois_2026-06`, `mois_2026-07`, etc.).
-
-### 🛠️ Ce qui change avec cette mise à jour :
-
-* **Une liste d'équipe unique et globale :** J'ai séparé l'équipe du planning. Désormais, les prénoms et les émojis/avatars sont stockés dans un document unique nommé **`global_team`** sur Firebase.
-* **Plus besoin de se réinscrire :** Peu importe le mois sur lequel vous naviguez (Juin, Juillet, Décembre...), l'équipe reste exactement la même. Si un petit nouveau arrive et crée son profil en Juin, il apparaîtra instantanément en Juillet !
-* **Historique des notes préservé :** Les votes, les moyennes et les présences restent bien séparés par mois pour ne pas fausser le classement.
-
-Voici le code complet mis à jour. Tu as juste à remplacer ton fichier actuel par celui-ci :
-
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -697,5 +684,3 @@ Voici le code complet mis à jour. Tu as juste à remplacer ton fichier actuel p
 </script>
 </body>
 </html>
-
-```
