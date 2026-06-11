@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Planning des Jeudis : Sur Mesure</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f9;
+            --sidebar-bg: #1e293b;
+            --sidebar-text: #94a3b8;
+            --sidebar-active: #38bdf8;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            --grad-1: linear-gradient(135deg, #0284c7, #0369a1);
+            --grad-2: linear-gradient(135deg, #b45309, #78350f);
+            --grad-3: linear-gradient(135deg, #047857, #065f46);
+            --grad-4: linear-gradient(135deg, #be123c, #9f1239);
+            --grad-5: linear-gradient(135deg, #6d28d9, #5b21b6);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; min-height: 100vh; flex-direction: row;
+        }
+
+        /* ÉCRAN DE CONNEXION / INSCRIPTION */
+        .auth-overlay {
+            position: fixed; top:0; left:0; width:100vw; height:100vh;
+            background: #0f172a; z-index: 9999; display: flex;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .auth-card {
+            background: white; padding: 40px; border-radius: 24px;
+            width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .auth-card h2 { margin-top: 0; font-size: 1.8rem; font-weight: 800; color: #0f172a; }
+        .auth-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
+        .auth-form { display: flex; flex-direction: column; gap: 16px; }
+        .auth-input {
+            width: 100%; padding: 14px 16px; border: 1px solid #e2e8f0;
+            border-radius: 12px; font-size: 0.95rem; font-weight: 600;
+            outline: none; background: #f8fafc; transition: border 0.2s;
+        }
+        .auth-input:focus { border-color: #0284c7; background: white; }
+        .auth-btn {
+            background: #0284c7; color: white; border: none; padding: 14px;
+            border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: background 0.2s; margin-top: 10px;
+        }
+        .auth-btn:hover { background: #0369a1; }
+        .auth-toggle { color: #0284c7; font-weight: 700; cursor: pointer; font-size: 0.9rem; margin-top: 15px; display: inline-block; }
+
+        /* APPLICATION PRINCIPALE */
+        .app-container { display: flex; width: 100%; min-height: 100vh; }
+        
+        .sidebar {
+            width: 280px; background-color: var(--sidebar-bg); padding: 40px 24px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.05); flex-shrink: 0;
+        }
+
+        .logo-area {
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 800; font-size: 1.3rem; color: white;
+            margin-bottom: 30px; letter-spacing: -0.5px;
+        }
+
+        .user-welcome-sidebar {
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px;
+            color: white; font-size: 0.85rem; margin-bottom: 20px; display: flex;
+            flex-direction: column; gap: 4px;
+        }
+        .user-welcome-sidebar span { font-weight: 800; color: var(--sidebar-active); font-size: 1rem; }
+
+        .nav-btn {
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+            border-radius: 12px; background: transparent; border: none;
+            color: var(--sidebar-text); font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; text-align: left; transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .nav-btn.active { background-color: rgba(56, 189, 248, 0.1); color: var(--sidebar-active); }
+        .nav-btn:hover:not(.active) { background-color: rgba(255, 255, 255, 0.05); color: white; }
+        .logout-btn { margin-top: auto; color: #f87171; }
+        .logout-btn:hover { background-color: rgba(248, 113, 113, 0.1) !important; color: #f87171 !important; }
+
+        .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .header-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; gap: 15px; flex-wrap: wrap; }
+        
+        h1 {
+            margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -1px;
+            background: linear-gradient(to right, #0f172a, #334155);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .selectors-group { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+
+        .selector-wrapper {
+            display: flex; align-items: center; gap: 10px; background: white;
+            padding: 8px 16px; border-radius: 14px; box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+        }
+        .selector-wrapper label { font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .selector-wrapper select { border: none; background: transparent; font-size: 1rem; font-weight: 800; color: #0284c7; cursor: pointer; outline: none; }
+        .selector-wrapper select.user-select { color: #059669; pointer-events: none; opacity: 0.8; } /* Bloqué sur l'utilisateur connecté */
+
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        .section-panel { background: white; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 35px; }
+        .panel-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-title { margin: 0; font-size: 1.15rem; font-weight: 700; }
+
+        .inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .input-group { display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; }
+        .input-group span.name-display { font-size: 0.95rem; color: var(--text-main); font-weight: 600; width: 100%; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .semaine-card { border-radius: 24px; color: white; padding: 24px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+        .card-header { font-size: 1.1rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        
+        .role-box { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.08); padding: 10px 14px; border-radius: 14px; }
+        .role-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; opacity: 0.7; margin-bottom: 2px; }
+        
+        .role-select-custom {
+            background: transparent; border: none; color: white; font-size: 1rem;
+            font-weight: 700; cursor: pointer; outline: none; width: 100%;
+            padding: 2px 0;
+        }
+        .role-select-custom option { color: var(--text-main); font-weight: 600; }
+
+        .presence-zone { background: rgba(0, 0, 0, 0.15); border-radius: 14px; padding: 12px; font-size: 0.85rem; }
+        .presence-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-weight: 700; }
+        .presence-btn { background: white; color: #0f172a; border: none; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
+        .presence-btn.active { background: #22c55e; color: white; }
+        .presence-list { opacity: 0.85; font-size: 0.78rem; word-break: break-word; }
+
+        .rating-box { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; }
+        .stars { display: flex; gap: 4px; font-size: 1.2rem; cursor: pointer; }
+        .star { color: rgba(255, 255, 255, 0.25); }
+        .star.active { color: #facc15; }
+        .avg-rating { font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 6px; }
+
+        .stats-container { background: white; border-radius: 24px; padding: 30px; box-shadow: var(--card-shadow); overflow-x: auto; }
+        .stats-table { width: 100%; border-collapse: collapse; }
+        .stats-table th { padding: 16px; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid #f1f5f9; text-align: left; }
+        .stats-table td { padding: 16px; border-bottom: 1px solid #f1f5f9; }
+
+        .badge-rank { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: 800; background: #f1f5f9; }
+        .rank-1 { background: #fef08a; color: #854d0e; }
+        .rank-2 { background: #e2e2e2; color: #475569; }
+        .rank-3 { background: #ffedd5; color: #9a3412; }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 70px; flex-direction: row; padding: 0 10px; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); gap: 0; }
+            .logo-area, .user-welcome-sidebar { display: none; }
+            .nav-btn { flex-direction: column; gap: 4px; padding: 8px; font-size: 0.75rem; text-align: center; flex: 1; justify-content: center; margin-top:0 !important; }
+            .main-content { padding: 20px 16px 90px 16px; }
+            h1 { font-size: 1.5rem; }
+            .header-status { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .inputs-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+            .cards-grid { grid-template-columns: 1fr; }
+        }
+
+        .sem-1 { background: var(--grad-1); } .sem-2 { background: var(--grad-2); }
+        .sem-3 { background: var(--grad-3); } .sem-4 { background: var(--grad-4); }
+        .sem-5 { background: var(--grad-5); }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ZONE D'AUTHENTIFICATION -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <h2 id="authTitle">✨ Bienvenue !</h2>
+            <p id="authSubtitle">Connecte-toi pour voir et modifier le planning de cuisine.</p>
+            
+            <div class="auth-form">
+                <input type="text" id="authFirstName" class="auth-input" placeholder="Ton Prénom (Ex: Lucas)" style="display:none;">
+                <input type="email" id="authEmail" class="auth-input" placeholder="Adresse Email">
+                <input type="password" id="authPassword" class="auth-input" placeholder="Mot de passe">
+                <button id="authSubmitBtn" class="auth-btn">Se connecter</button>
+            </div>
+            <span id="authToggleMode" class="auth-toggle">Pas encore de compte ? S'inscrire</span>
+        </div>
+    </div>
+
+    <!-- APPLICATION -->
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="logo-area">✨ <span>Jeudi Cuistot</span></div>
+            <div class="user-welcome-sidebar">Bienvenue, <span id="sidebarUserName">...</span></div>
+            
+            <button class="nav-btn active" id="btn-aperçu" onclick="switchPage('aperçu')">📅 <span>Planning</span></button>
+            <button class="nav-btn" id="btn-stats" onclick="switchPage('stats')">🏆 <span>Classement</span></button>
+            <button class="nav-btn logout-btn" id="logoutBtn">🚪 <span>Déconnexion</span></button>
+        </div>
+
+        <div class="main-content">
+            <div class="header-status">
+                <h1>Culinary Workspace</h1>
+                
+                <div class="selectors-group">
+                    <div class="selector-wrapper">
+                        <label for="userSelect">👤 Connecté :</label>
+                        <select id="userSelect" class="month-select user-select"></select>
+                    </div>
+
+                    <div class="selector-wrapper">
+                        <label for="monthSelect">📅 Mois :</label>
+                        <select id="monthSelect" class="month-select">
+                            <option value="2026-06">Juin</option>
+                            <option value="2026-07">Juillet</option>
+                            <option value="2026-08">Août</option>
+                            <option value="2026-09">Septembre</option>
+                            <option value="2026-10">Octobre</option>
+                            <option value="2026-11">Novembre</option>
+                            <option value="2026-12">Décembre</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-aperçu" class="page-section active">
+                <div class="section-panel">
+                    <div class="panel-header-flex">
+                        <div class="panel-title">👥 La Brigade des Cuistots</div>
+                    </div>
+                    <div class="inputs-grid" id="inputsContainer"></div>
+                </div>
+                <h2 id="planningTitle" style="font-weight:800; font-size:1.3rem; margin-bottom:20px; color:#1e293b;">📅 Les Jeudis de Juin</h2>
+                <div class="cards-grid" id="cardsContainer"></div>
+            </div>
+
+            <div id="page-stats" class="page-section">
+                <div class="stats-container">
+                    <h2 id="statsTitle" style="margin-top:0; font-weight:800; font-size:1.4rem; margin-bottom:6px;">🏆 Classement de Juin</h2>
+                    <p style="color:var(--text-muted); margin-bottom:25px; margin-top:0; font-size:0.9rem;">Calculé selon la satisfaction moyenne globale donnée par l'équipe.</p>
+                    <table class="stats-table">
+                        <thead>
+                            <tr><th style="width: 80px;">Rang</th><th>Nom</th><th>Score Moyen</th><th>Prestations</th></tr>
+                        </thead>
+                        <tbody id="statsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // 🔑 Clés de configuration pour "base-de-test-4c1a5"
+    const firebaseConfig = {
+        apiKey: "AIzaSyCjxDs1KpC31RxhqttQ4RTK29ODM8glQHE",
+        authDomain: "base-de-test-4c1a5.firebaseapp.com",
+        projectId: "base-de-test-4c1a5",
+        storageBucket: "base-de-test-4c1a5.firebasestorage.app",
+        messagingSenderId: "275650264990",
+        appId: "1:275650264990:web:6cdc061a42b6d94de5208f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const emojis = ["🦊", "🦁", "🐼", "🐨", "🐯", "🐱", "🐰", "🦊", "🦄", "🦅"];
+    let defaultParticipants = ["Lucas", "Laura", "Claribel", "Yoann", "Mireille", "Jeanne", "Candices", "Killian", "Annaig", "Ewen", "Anthony", "Clement"];
+    
+    let participants = [...defaultParticipants];
+    let thursdaysData = [];
+    let overrides = {}; 
+
+    let currentMonth = "2026-06";
+    let currentUser = "";
+    let unsubscribe = null;
+    let isLoginMode = true;
+
+    const monthNames = {
+        "2026-06": "Juin", "2026-07": "Juillet", "2026-08": "Août",
+        "2026-09": "Septembre", "2026-10": "Octobre", "2026-11": "Novembre", "2026-12": "Décembre"
+    };
+    
+
+    // --- GESTION DE L'AUTHENTIFICATION ---
+
+    const authOverlay = document.getElementById('authOverlay');
+    const authTitle = document.getElementById('authTitle');
+    const authSubtitle = document.getElementById('authSubtitle');
+    const authFirstName = document.getElementById('authFirstName');
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authToggleMode = document.getElementById('authToggleMode');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const sidebarUserName = document.getElementById('sidebarUserName');
+
+    authToggleMode.addEventListener('click', () => {
+        isLoginMode = !isLoginMode;
+        if (isLoginMode) {
+            authTitle.innerText = "✨ Bienvenue !";
+            authSubtitle.innerText = "Connecte-toi pour voir et modifier le planning de cuisine.";
+            authFirstName.style.display = "none";
+            authSubmitBtn.innerText = "Se connecter";
+            authToggleMode.innerText = "Pas encore de compte ? S'inscrire";
+        } else {
+            authTitle.innerText = "🍳 Rejoins la brigade !";
+            authSubtitle.innerText = "Crée ton compte pour participer aux jeudis cuistot.";
+            authFirstName.style.display = "block";
+            authSubmitBtn.innerText = "Créer mon compte";
+            authToggleMode.innerText = "Déjà inscrit ? Se connecter";
+        }
+    });
+
+    authSubmitBtn.addEventListener('click', async () => {
+        const email = authEmail.value.trim();
+        const password = authPassword.value;
+        const firstName = authFirstName.value.trim();
+
+        if(!email || !password) { alert("Remplis tous les champs !"); return; }
+
+        try {
+            if (isLoginMode) {
+                await signInWithEmailAndPassword(auth, email, password);
+            } else {
+                if(!firstName) { alert("Donne-nous ton prénom !"); return; }
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Sauvegarder le prénom dans le profil de l'utilisateur Firebase
+                await updateProfile(userCredential.user, { displayName: firstName });
+                
+                // Ajouter automatiquement le prénom à la liste globale des participants dans Firebase si absent
+                if(!participants.includes(firstName)) {
+                    participants.push(firstName);
+                    await updateDoc(doc(db, "planning", `mois_${currentMonth}`), { names: participants });
+                }
+                // Forcer le rechargement de la page pour bien propager le changement d'état
+                window.location.reload();
+            }
+        } catch (error) {
+            alert("Erreur : " || error.message);
+        }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        signOut(auth);
+    });
+
+    // ÉCOUTEUR D'ÉTAT DE CONNEXION D'UN COMPTE
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            authOverlay.style.display = 'none';
+            currentUser = user.displayName || "Invité";
+            sidebarUserName.innerText = currentUser;
+            connectToMonth(currentMonth);
+        } else {
+            authOverlay.style.display = 'flex';
+            if (unsubscribe) unsubscribe();
+        }
+    });
+
+    // --- LOGIQUE DU PLANNING ---
+
+    function getThursdaysInMonthWithGlobalIndex(year, monthIndex) {
+        let date = new Date(year, 0, 1);
+        let thursdaysCount = 0;
+        let thursdaysInRequestedMonth = [];
+        
+        while (date.getFullYear() === year) {
+            if (date.getDay() === 4) {
+                if (date.getMonth() === monthIndex) {
+                    thursdaysInRequestedMonth.push({
+                        dateText: `Jeudi ${date.getDate()} ${monthNames[`2026-${String(monthIndex + 1).padStart(2, '0')}`]}`,
+                        globalIndex: thursdaysCount
+                    });
+                }
+                thursdaysCount++;
+            }
+            date.setDate(date.getDate() + 1);
+        }
+        return thursdaysInRequestedMonth;
+    }
+
+    function getRolesForGlobalIndex(globalIndex) {
+        if (overrides && overrides[globalIndex]) {
+            return {
+                plat: overrides[globalIndex].plat || "Aucun",
+                dessert: overrides[globalIndex].dessert || "Aucun",
+                remp: overrides[globalIndex].remp || "Aucun"
+            };
+        }
+
+        const baseOrder = [
+            "Jeanne", "Laura", "Claribel", "Yoann", "Lucas", 
+            "Mireille", "Candices", "Killian", "Annaig", "Ewen", "Anthony", "Clement"
+        ];
+
+        const order = baseOrder.filter(n => participants.includes(n));
+        participants.forEach(p => {
+            if (!order.includes(p)) order.push(p);
+        });
+
+        const baseIndex = globalIndex - 22; 
+        const platIdx = ((baseIndex * 2) % order.length + order.length) % order.length;
+        const dessertIdx = (((baseIndex * 2) + 1) % order.length + order.length) % order.length;
+        const rempIdx = (((baseIndex * 2) + 2) % order.length + order.length) % order.length;
+
+        return {
+            plat: order[platIdx] || "Invité(e)",
+            dessert: order[dessertIdx] || "Invité(e)",
+            remp: order[rempIdx] || "Invité(e)"
+        };
+    }
+
+    window.switchPage = function(pageId) {
+        document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`page-${pageId}`).classList.add('active');
+        document.getElementById(`btn-${pageId}`).classList.add('active');
+        if(pageId === 'stats') generateStats();
+    }
+
+    document.getElementById('monthSelect').addEventListener('change', (e) => {
+        currentMonth = e.target.value;
+        document.getElementById('planningTitle').innerText = `📅 Les Jeudis de ${monthNames[currentMonth]}`;
+        document.getElementById('statsTitle').innerText = `🏆 Classement de ${monthNames[currentMonth]}`;
+        connectToMonth(currentMonth);
+    });
+
+    function connectToMonth(monthId) {
+        if (unsubscribe) unsubscribe();
+
+        unsubscribe = onSnapshot(doc(db, "planning", `mois_${monthId}`), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                participants = data.names || [...defaultParticipants];
+                thursdaysData = data.thursdaysData || [];
+                overrides = data.overrides || {};
+            } else {
+                participants = [...defaultParticipants];
+                thursdaysData = [];
+                overrides = {};
+                setDoc(doc(db, "planning", `mois_${monthId}`), { names: participants, thursdaysData: [], overrides: {} });
+            }
+            
+            // Si le user connecté n'est pas dans la liste récupérée, on l'ajoute automatiquement
+            if(currentUser && !participants.includes(currentUser)) {
+                participants.push(currentUser);
+                updateDoc(doc(db, "planning", `mois_${monthId}`), { names: participants });
+                return;
+            }
+
+            updateUserDropdown();
+            initInputs();
+            generatePlanningCards();
+            if (document.getElementById('page-stats').classList.contains('active')) {
+                generateStats();
+            }
+        });
+    }
+
+    function updateUserDropdown() {
+        const userSelect = document.getElementById('userSelect');
+        userSelect.innerHTML = '';
+        participants.forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.innerText = name;
+            if(name === currentUser) opt.selected = true;
+            userSelect.appendChild(opt);
+        });
+    }
+
+    function initInputs() {
+        const container = document.getElementById('inputsContainer');
+        container.innerHTML = '';
+        participants.forEach((name, index) => {
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <span style="margin-right:8px;">${emojis[index % emojis.length]}</span>
+                <span class="name-display">${name}</span>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    window.updateRoleManually = function(globalIndex, roleType, selectedValue) {
+        if (!overrides[globalIndex]) {
+            const defaultRoles = getRolesForGlobalIndex(globalIndex);
+            overrides[globalIndex] = { ...defaultRoles };
+        }
+        overrides[globalIndex][roleType] = selectedValue;
+        updateDoc(doc(db, "planning", `mois_${currentMonth}`), { overrides: overrides });
+    }
+
+    window.rateWeekCloud = function(weekIndex, starRating) {
+        if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, presence: [] };
+        if(!thursdaysData[weekIndex].ratings) thursdaysData[weekIndex].ratings = {};
+        thursdaysData[weekIndex].ratings[currentUser] = starRating;
+        updateDoc(doc(db, "planning", `mois_${currentMonth}`), { thursdaysData: thursdaysData });
+    }
+
+    window.togglePresence = function(weekIndex) {
+        if(!thursdaysData[weekIndex]) thursdaysData[weekIndex] = { ratings: {}, presence: [] };
+        if(!thursdaysData[weekIndex].presence) thursdaysData[weekIndex].presence = [];
+        const presenceList = thursdaysData[weekIndex].presence;
+        const pIdx = presenceList.indexOf(currentUser);
+        
+        if (pIdx > -1) {
+            presenceList.splice(pIdx, 1);
+        } else {
+            presenceList.push(currentUser);
+        }
+        updateDoc(doc(db, "planning", `mois_${currentMonth}`), { thursdaysData: thursdaysData });
+    }
+
+    function buildOptionsHTML(selectedName) {
+        return participants.map(p => `<option value="${p}" ${p === selectedName ? 'selected' : ''}>${p}</option>`).join('');
+    }
+
+    function generatePlanningCards() {
+        const cardsContainer = document.getElementById('cardsContainer');
+        cardsContainer.innerHTML = '';
+
+        const parts = currentMonth.split('-');
+        const year = parseInt(parts[0]);
+        const monthIndex = parseInt(parts[1]) - 1;
+        const thursdaysDates = getThursdaysInMonthWithGlobalIndex(year, monthIndex);
+
+        thursdaysDates.forEach((jeudiInfo, i) => {
+            const card = document.createElement('div');
+            card.className = `semaine-card sem-${i + 1}`;
+            
+            const roles = getRolesForGlobalIndex(jeudiInfo.globalIndex);
+
+            if(!thursdaysData[i]) thursdaysData[i] = { ratings: {}, presence: [] };
+            if(!thursdaysData[i].ratings) thursdaysData[i].ratings = {};
+            if(!thursdaysData[i].presence) thursdaysData[i].presence = [];
+
+            const currentRatings = thursdaysData[i].ratings;
+            const voters = Object.keys(currentRatings);
+            let avgText = "Pas de note";
+            if (voters.length > 0) {
+                let total = voters.reduce((sum, voter) => sum + currentRatings[voter], 0);
+                avgText = `⭐ ${(total / voters.length).toFixed(1)} (${voters.length} v.)`;
+            }
+
+            const userRating = currentRatings[currentUser] || 0;
+
+            let starsHTML = '';
+            for(let s = 1; s <= 5; s++) {
+                starsHTML += `<span class="star ${s <= userRating ? 'active' : ''}" onclick="rateWeekCloud(${i}, ${s})">★</span>`;
+            }
+
+            const currentPresence = thursdaysData[i].presence;
+            const isPresent = currentPresence.includes(currentUser);
+            const presenceListText = currentPresence.length > 0 ? currentPresence.join(', ') : "Personne pour le moment";
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <span>${jeudiInfo.dateText}</span>
+                    <span class="avg-rating">${avgText}</span>
+                </div>
+                <div class="role-box">
+                    <span class="role-label">🍲 Plat Principal</span>
+                    <select class="role-select-custom" onchange="updateRoleManually(${jeudiInfo.globalIndex}, 'plat', this.value)">
+                        ${buildOptionsHTML(roles.plat)}
+                    </select>
+                </div>
+                <div class="role-box">
+                    <span class="role-label">🍰 Dessert</span>
+                    <select class="role-select-custom" onchange="updateRoleManually(${jeudiInfo.globalIndex}, 'dessert', this.value)">
+                        ${buildOptionsHTML(roles.dessert)}
+                    </select>
+                </div>
+                <div class="role-box">
+                    <span class="role-label">🔄 Remplaçant</span>
+                    <select class="role-select-custom" onchange="updateRoleManually(${jeudiInfo.globalIndex}, 'remp', this.value)">
+                        ${buildOptionsHTML(roles.remp)}
+                    </select>
+                </div>
+                
+                <div class="presence-zone">
+                    <div class="presence-header">
+                        <span>🙋‍♂️ Présents (${currentPresence.length}) :</span>
+                        <button class="presence-btn ${isPresent ? 'active' : ''}" onclick="togglePresence(${i})">
+                            ${isPresent ? '✅ Présent' : '❌ Absent'}
+                        </button>
+                    </div>
+                    <div class="presence-list">${presenceListText}</div>
+                </div>
+
+                <div class="rating-box">
+                    <span class="role-label">Ta note :</span>
+                    <div class="stars">${starsHTML}</div>
+                </div>
+            `;
+            cardsContainer.appendChild(card);
+        });
+    }
+
+    function generateStats() {
+        const tbody = document.getElementById('statsTableBody');
+        tbody.innerHTML = '';
+        let playerStats = participants.map(name => ({ name, totalMoyennes: 0, repasComptes: 0 }));
+
+        const parts = currentMonth.split('-');
+        const year = parseInt(parts[0]);
+        const monthIndex = parseInt(parts[1]) - 1;
+        const thursdaysDates = getThursdaysInMonthWithGlobalIndex(year, monthIndex);
+
+        thursdaysDates.forEach((jeudiInfo, i) => {
+            if(!thursdaysData[i] || !thursdaysData[i].ratings) return;
+            
+            const currentRatings = thursdaysData[i].ratings;
+            const voters = Object.keys(currentRatings);
+            
+            if (voters.length > 0) {
+                let totalJeudi = voters.reduce((sum, voter) => sum + currentRatings[voter], 0);
+                let moyenneJeudi = totalJeudi / voters.length;
+
+                const roles = getRolesForGlobalIndex(jeudiInfo.globalIndex);
+                
+                let chefIdx = participants.indexOf(roles.plat);
+                if(chefIdx > -1 && playerStats[chefIdx]) {
+                    playerStats[chefIdx].totalMoyennes += moyenneJeudi;
+                    playerStats[chefIdx].repasComptes += 1;
+                }
+            }
+        });
+
+        playerStats.forEach(p => { p.moyenne = p.repasComptes > 0 ? (p.totalMoyennes / p.repasComptes).toFixed(1) : "N/A"; });
+        playerStats.sort((a, b) => {
+            if (a.moyenne === "N/A") return 1; if (b.moyenne === "N/A") return -1;
+            return parseFloat(b.moyenne) - parseFloat(a.moyenne);
+        });
+
+        playerStats.forEach((p, index) => {
+            let rankClass = ""; let rankText = index + 1;
+            if(p.moyenne !== "N/A") {
+                if(index === 0) rankClass = "rank-1"; if(index === 1) rankClass = "rank-2"; if(index === 2) rankClass = "rank-3";
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span class="badge-rank ${rankClass}">${rankText}</span></td>
+                <td style="font-weight:700;">${p.name}</td>
+                <td style="color:${p.moyenne !== 'N/A' ? '#eab308' : '#94a3b8'}; font-weight:800;">${p.moyenne !== 'N/A' ? p.moyenne + ' ★' : 'Aucun repas noté'}</td>
+                <td>${p.repasComptes} fois chef ce mois</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+</body>
+</html>
